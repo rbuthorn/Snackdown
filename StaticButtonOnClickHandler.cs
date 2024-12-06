@@ -9,7 +9,7 @@ using SQLite4Unity3d;
 
 public class StaticButtonOnClickHandler : MonoBehaviour
 {
-    public UnityEvent<int> onButtonClick = new UnityEvent<int>();
+    //public UnityEvent<int> onButtonClick = new UnityEvent<int>();
 
     //void questsButtonHandler()
     //{
@@ -19,6 +19,13 @@ public class StaticButtonOnClickHandler : MonoBehaviour
     //{
 
     //}
+
+    public void onButtonClick(int levelId)
+    {
+        Utilities.LoadScene("Combat Placeholder");
+        GameManager GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        GameManager.setLevelId(levelId);
+    }
 
     //void profileButtonHandler()
     //{

@@ -1,9 +1,6 @@
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using UnityEngine.UI;
-using System.Data;
 using System;
 
 public class _CharacterController : MonoBehaviour
@@ -118,7 +115,6 @@ public class _CharacterController : MonoBehaviour
         }
         return false;
     }
-
 
     public void TriggerDeathProcess()
     {

@@ -16,7 +16,7 @@ public class DatabaseManager : MonoBehaviour
         //check if very first launch
         using (connection = new SQLiteConnection(databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create))
         {
-            CheckGameVersion();
+            //CheckGameVersion();
             WIPE_DATABASE();
             onFirstLaunch();
         };
@@ -105,6 +105,25 @@ public class DatabaseManager : MonoBehaviour
             RewardDataId: 0
         );
         InsertLevelData(Level0);
+
+        LevelData Level1 = new LevelData(
+            DBLevelId: 1,
+            LevelName: "second level(load tester)",
+            Wall: "na",
+            Floor: "na",
+            Basement: "na",
+            EnemyTower: "na",
+            EnemyTowerHealth: 100,
+            LevelType: "campaign",
+            Chapter: "herbshire",
+            EnemyMultiplier: 1,
+            NumTimesBeaten: 0,
+            Difficulty: 1,
+            isHardModeLevel: false,
+            HardModeLevelId: -1,
+            RewardDataId: 0
+        );
+        InsertLevelData(Level1);
     }
 
     private void initFlags(){
@@ -125,6 +144,19 @@ public class DatabaseManager : MonoBehaviour
             SpawnAfterXSecs: 0
         );
         InsertSpawnPointData(spawnpoint0);
+
+        SpawnPointData spawnpoint1 = new SpawnPointData(
+            DBSpawnPointId: 1,
+            DBCharacterId: 7,
+            DBLevelId: 1,
+            StartSpawningInXSecs: int.MaxValue,
+            SpawnAfterXFriendlies: 1,
+            SpawnAfterXTowerDamage: int.MaxValue,
+            NumSpawning: 200,
+            TimeBetweenSpawns: .1f,
+            SpawnAfterXSecs: 5
+        );
+        InsertSpawnPointData(spawnpoint1);
     }
 
     private void initSensitiveCharacterData()

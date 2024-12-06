@@ -28,7 +28,8 @@ public class CombatController : MonoBehaviour
     private int totalFriendliesSpawned = 0;
     private int startingTowerHealth = 0; //grab these from the level data later and delete any references to these
     private int currTowerHealth = 0;
-    private SceneCleanup sceneCleanup { get; set; }
+    private SceneCleanup sceneCleanup;
+    private GameManager GameManager;
 
     public List<_CharacterController> deployedEnemies
     {
@@ -46,6 +47,7 @@ public class CombatController : MonoBehaviour
     {
         spawner = GetComponent<CharacterSpawner>();
         sceneCleanup = GetComponent<SceneCleanup>();
+        GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         mainCamera = Camera.main;
         CaptureLineupCharacters();
         InitLineupCharacters();
@@ -79,7 +81,7 @@ public class CombatController : MonoBehaviour
 
     void InitLineupEnemies()
     {
-        int LevelID = 0; //hardcoded solution for now
+        int LevelID = GameManager.levelId; //hardcoded solution for now
         //queries the spawnpoints of the level
         spawnPoints = LocalDatabaseAccessLayer.GetSpawnPoints(LevelID);
         //then queries the enmy id of those spawn point, loads prefab into level, puts prefab into lineupenms
@@ -103,6 +105,7 @@ public class CombatController : MonoBehaviour
         deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.15f, mainCamera.nearClipPlane));
         enemyTowerInstance = Instantiate(enemyTower, deployLocation, Quaternion.identity);
         deployedEnemies.Add(enemyTowerInstance.GetComponent<_CharacterController>());
+        //add dynamic tower health here
     }
 
     void UpdateElapsedTime()

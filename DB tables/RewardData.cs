@@ -26,6 +26,11 @@ public class RewardData //this can be used as GENERIC reward data - levels, dail
     public string DateOfDailyReward { get; set; } // ISO 8601 strings ("YYYY-MM-DD HH:MM:SS.SSS" format)
     public bool RewardObtained { get; set; }
 
+    public RewardData()
+    {
+
+    }
+
     public RewardData(
         int DBRewardID,
         int Gold,

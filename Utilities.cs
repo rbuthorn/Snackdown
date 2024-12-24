@@ -100,7 +100,7 @@ public static class Utilities
             }
 
             // If character is too close or out of attack range, skip to the next one
-            else if (distance <= 0.5f)
+            else if (distance <= 5f)
             {
                 continue;
             }

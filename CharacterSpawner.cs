@@ -16,28 +16,36 @@ public class CharacterSpawner : MonoBehaviour
     }
 
     //ENEMIES
-    public void StartSpawnEnemyCoroutine(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies)
+    public void StartSpawnEnemyCoroutine(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies, float multiplier)
     {
-        StartCoroutine(SpawnEnemyCoroutine(spd, lineupEnemies));
+        StartCoroutine(SpawnEnemyCoroutine(spd, lineupEnemies, multiplier));
     }
 
-    IEnumerator SpawnEnemyCoroutine(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies)
+    IEnumerator SpawnEnemyCoroutine(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies, float multiplier)
     {
         yield return new WaitForSeconds(spd.SpawnAfterXSecs);
         for (int i = 0; i < spd.NumSpawning; i++)
         {
-            DeployEnemy(lineupEnemies[spd.DBCharacterId]);
+            DeployEnemy(lineupEnemies[spd.DBCharacterId], multiplier);
             yield return new WaitForSeconds(spd.TimeBetweenSpawns);
         }
     }
 
-    void DeployEnemy(GameObject enemy)
+    void DeployEnemy(GameObject enemy, float multiplier)
     {
         Vector3 cameraCenter = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.2f, mainCamera.nearClipPlane));
         GameObject enemyInstance = Instantiate(enemy, cameraCenter, Quaternion.identity);
         _CharacterController enemyController = enemyInstance.GetComponent<_CharacterController>();
         enemyController.PREFAB = enemyInstance;
+        ApplyMultiplier(enemyController, multiplier);
         cc.UpdateDeployedList(enemyController, true);
+    }
+
+    void ApplyMultiplier(_CharacterController character, float multiplier)
+    {
+        character.characterData.Attack *= multiplier;
+        character.characterData.Defense *= multiplier;
+        character.characterData.Health *= multiplier;
     }
 
     //FRIENDLIES

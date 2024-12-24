@@ -68,11 +68,6 @@ public class DatabaseManager : MonoBehaviour
         initSensitiveCharacterData();
     }
 
-    private void initPlayer()
-    {
-
-    }
-
     private void initCharacters(){
         initBabyCarrot();
         initAgedCheese();
@@ -164,6 +159,34 @@ public class DatabaseManager : MonoBehaviour
 
     }
 
+    private void initPlayer()
+    {
+        PlayerData player = new PlayerData(
+            Id: 0,
+            Username: "rob",
+            XP: 0,
+            PlayerLevel: 1,
+            PowerLevel: 1,
+            FriendlyTowerHealth: 300,
+            Gold: 100,
+            Gems: 0,
+            Evos: 0,
+            LevelVegetableStone: 1,
+            LevelFruitStone: 1,
+            LevelDairyStone: 1,
+            LevelSeafoodStone: 1,
+            LevelMeatStone: 1,
+            LevelDessertStone: 1,
+            BronzePlatters: 0,
+            SilverPlatters: 0,
+            GoldPlatters: 0,
+            DiamondPlatters: 0,
+            SurvivalRevives: 0,
+            EnergyRefills: 0
+        );
+        InsertPlayerData(player);
+    }
+
     private void InsertCharacterData(CharacterData DBCharacterData)
     {
         connection.Insert(DBCharacterData);
@@ -182,6 +205,11 @@ public class DatabaseManager : MonoBehaviour
     private void InsertSensitiveCharacterData(SensitiveCharacterData character)
     {
         connection.Insert(character);
+    }
+
+    private void InsertPlayerData(PlayerData player)
+    {
+        connection.Insert(player);
     }
 
     private void CheckGameVersion()
@@ -227,10 +255,10 @@ public class DatabaseManager : MonoBehaviour
             CookTime: .5f,
             Cooldown: 1,
             Cost: 100,
-            AttackRange: 10,
+            AttackRange: 20,
             AttackRate: 1,
             AreaAtk: false,
-            DamageRange: 5,
+            DamageRange: 15,
             isEnemy: false,
             AttackAdditivePerLevel: 0,
             DefenseAdditivePerLevel: 0,

@@ -29,7 +29,9 @@ public class CombatController : MonoBehaviour
     private int startingTowerHealth = 0; //grab these from the level data later and delete any references to these
     private int currTowerHealth = 0;
     private SceneCleanup sceneCleanup;
-    private GameManager GameManager;
+    private GameManager gameManager;
+    private int currentLevelID;
+    private float currentEnemyMultiplier;
 
     public List<_CharacterController> deployedEnemies
     {
@@ -45,9 +47,12 @@ public class CombatController : MonoBehaviour
 
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        currentLevelID = gameManager.levelId;
+        spawnPoints = LocalDatabaseAccessLayer.LoadSpawnPointData(currentLevelID);
+        currentEnemyMultiplier = LocalDatabaseAccessLayer.GetEnemyMultiplier(currentLevelID);
         spawner = GetComponent<CharacterSpawner>();
         sceneCleanup = GetComponent<SceneCleanup>();
-        GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         mainCamera = Camera.main;
         CaptureLineupCharacters();
         InitLineupCharacters();
@@ -81,10 +86,7 @@ public class CombatController : MonoBehaviour
 
     void InitLineupEnemies()
     {
-        int LevelID = GameManager.levelId; //hardcoded solution for now
-        //queries the spawnpoints of the level
-        spawnPoints = LocalDatabaseAccessLayer.GetSpawnPoints(LevelID);
-        //then queries the enmy id of those spawn point, loads prefab into level, puts prefab into lineupenms
+        //queries the enmy id of those spawn point, loads prefab into level, puts prefab into lineupenms
         foreach (var spawnPoint in spawnPoints)
         {
             CharacterData enemy = LocalDatabaseAccessLayer.GetEnemyFromSpawnPoint(spawnPoint.DBCharacterId);
@@ -95,17 +97,21 @@ public class CombatController : MonoBehaviour
 
     void InitTowers()
     {
+        int enemyTowerHealth = LocalDatabaseAccessLayer.GetEnemyTowerHealth(currentLevelID);
+        int friendlyTowerHealth = LocalDatabaseAccessLayer.GetFriendlyTowerHealth();
+        //^^instantiates towers with placeholder health first, then dynamic health implemented
         GameObject friendlyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/Friendly Stove Prefab");
         GameObject enemyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/TEMP Enemy Stove Prefab");
 
         Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.15f, mainCamera.nearClipPlane));
         friendlyTowerInstance = Instantiate(friendlyTower, deployLocation, Quaternion.identity);
         deployedFriendlies.Add(friendlyTowerInstance.GetComponent<_CharacterController>());
+        friendlyTowerInstance.GetComponent<_CharacterController>().characterData.Health = friendlyTowerHealth;
 
         deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.15f, mainCamera.nearClipPlane));
         enemyTowerInstance = Instantiate(enemyTower, deployLocation, Quaternion.identity);
         deployedEnemies.Add(enemyTowerInstance.GetComponent<_CharacterController>());
-        //add dynamic tower health here
+        enemyTowerInstance.GetComponent<_CharacterController>().characterData.Health = enemyTowerHealth;
     }
 
     void UpdateElapsedTime()
@@ -124,7 +130,7 @@ public class CombatController : MonoBehaviour
                 )
             {
                 spawnPointsToDelete.Add(spawnPoint);
-                spawner.StartSpawnEnemyCoroutine(spawnPoint, lineupEnemies);
+                spawner.StartSpawnEnemyCoroutine(spawnPoint, lineupEnemies, currentEnemyMultiplier); //hardcoded
             }
         }
 
@@ -231,16 +237,26 @@ public class CombatController : MonoBehaviour
         totalFriendliesSpawned += 1;
     }
 
+    RewardData GrabRewardDataForCurrentLevel(int currentLevelID)
+    {
+        return LocalDatabaseAccessLayer.GetRewardData(currentLevelID);
+    }
+
     void CheckWinCondition()
     {
         if (!deployedEnemies.Contains(enemyTowerInstance.GetComponent<_CharacterController>()))
         {
             Debug.Log("you win!");
+            //PauseScene();
+            LocalDatabaseAccessLayer.UpdateNumTimesBeaten(currentLevelID, 1);
+            //ModalController.DisplayRewardModalAfterWin(GrabRewardDataForCurrentLevel);
             sceneCleanup.CleanUpScene();
         }
         else if (!deployedFriendlies.Contains(friendlyTowerInstance.GetComponent<_CharacterController>()))
         {
-            Debug.Log("you lost!");
+            Debug.Log("you lose!");
+            //PauseScene();
+            //ModalController.DisplayModalAfterLoss();
             sceneCleanup.CleanUpScene();
         }
     }

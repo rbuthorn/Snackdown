@@ -26,7 +26,7 @@ public class CharacterData
     //therefore, attack rate is generally more a measure of idle time, since atk animation is dictated by jackson
     public bool AreaAtk { get; set; }
     public float DamageRange { get; set; } //the minimum distance AWAY from the character the enemy has to be in order to take damage
-    public bool isEnemy { get; set; } //this is not just for enemy characters9spoon, fork, etc) this is also for pvp for the characters you are fighting against
+    public bool isEnemy { get; set; } //this is not just for enemy characters spoon, fork, etc) this is also for pvp for the characters you are fighting against
 
     //JUST CHARACTER
     public string Type { get; set; } //veggie, fruit, etc

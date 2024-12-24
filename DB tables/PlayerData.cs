@@ -8,6 +8,7 @@ public class PlayerData
     public int XP { get; set; }
     public int PlayerLevel {get; set; } //calculate player level every time xp is increased
     public int PowerLevel {get; set; }
+    public int FriendlyTowerHealth { get; set; }
 
     //all items
     public int Gold { get; set; }
@@ -30,7 +31,12 @@ public class PlayerData
     public int DiamondPlatters { get; set; }
     public int SurvivalRevives { get; set; }
     public int EnergyRefills { get; set; }
+    //xp bottles here
 
+    public PlayerData()
+    {
+
+    }
 
     public PlayerData(
         int Id,
@@ -38,6 +44,7 @@ public class PlayerData
         int XP,
         int PlayerLevel,
         int PowerLevel,
+        int FriendlyTowerHealth,
         int Gold,
         int Gems,
         int Evos,
@@ -65,6 +72,7 @@ public class PlayerData
         setXP(XP);
         setPlayerLevel(PlayerLevel);
         setPowerLevel(PowerLevel);
+        setFriendlyTowerHealth(FriendlyTowerHealth);
         setGold(Gold);
         setGems(Gems);
         setEvos(Evos);
@@ -111,6 +119,11 @@ public class PlayerData
     {
         Debug.Assert(a >= 0);
         PowerLevel = a;
+    }
+    public void setFriendlyTowerHealth(int a)
+    {
+        Debug.Assert(a >= 0);
+        FriendlyTowerHealth = a;
     }
     public void setGold(int a)
     {

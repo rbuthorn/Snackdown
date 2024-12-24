@@ -24,6 +24,11 @@ public class LevelData
     public int HardModeLevelId { get; set; } // for campaign or any other place where theres two versions of a level. should be -1 if no hard mode version.
     public int RewardDataId { get; set; }
 
+    public LevelData()
+    {
+
+    }
+
     public LevelData(
         int DBLevelId,
         string LevelName,

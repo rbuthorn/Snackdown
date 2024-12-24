@@ -32,6 +32,8 @@ public class LevelGenerator : MonoBehaviour
         //get level data from the db and put it into the createCanvas method
         createTexts();
         createCanvas("Basement", "Aged Cheese Prefab", 55f);
+        //create outer canvas, then pull the strings of the background sprites from the DB
+        //then load the asset associated with that string, and anchor it to a place on the canvas.
     }
 
     private void createCanvas(string GOName, string levelSprite, float yPos)

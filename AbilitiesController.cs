@@ -16,9 +16,9 @@ public class AbilitiesController : MonoBehaviour
 
     //tomato
     void DamageToFrontmostEnemy(_CharacterController character, int evolutionNumber){
-        List<_CharacterController> enemies = new List<_CharacterController>(cc.deployedEnemies);
+        List<_EntityController> enemies = new List<_EntityController>(cc.deployedEnemies);
         Utilities.SortByXPosDescending(enemies);
-        _CharacterController target = enemies[0];
+        _EntityController target = enemies[0];
         //if list of targets, add a for loop here
         character.DealDamageToTarget(character.characterData.Attack * (evolutionNumber + .5f), target, true);
     }

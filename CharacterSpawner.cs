@@ -66,13 +66,16 @@ public class CharacterSpawner : MonoBehaviour
 
     void StartSpawnFriendlyCoroutine(GameObject friendly, float cookTime, int cost)
     {
-        StartCoroutine(SpawnFriendlyCoroutine(friendly, cookTime, cost));
+        _TowerController tower = GameObject.Find("Friendly Stove Prefab(Clone)").GetComponent<_TowerController>();
+        tower.UpdateAnimatorParameters("Cook");
+        StartCoroutine(SpawnFriendlyCoroutine(friendly, cookTime, cost, tower));
     }
 
-    IEnumerator SpawnFriendlyCoroutine(GameObject prefab, float cookTime, int cost)
+    IEnumerator SpawnFriendlyCoroutine(GameObject prefab, float cookTime, int cost, _TowerController tower)
     {
         mannaController.UpdateCurrentManna(-1*cost);
         yield return new WaitForSeconds(cookTime);
+        tower.UpdateAnimatorParameters("Deploy");
         Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.2f, mainCamera.nearClipPlane));
         GameObject characterInstance = Instantiate(prefab, deployLocation, Quaternion.identity);
         _CharacterController friendlyController = characterInstance.GetComponent<_CharacterController>();

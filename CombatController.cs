@@ -14,8 +14,8 @@ public class CombatController : MonoBehaviour
 {
     private List<SpawnPointData> spawnPoints = new List<SpawnPointData>();
     private List<SpawnPointData> spawnPointsToDelete = new List<SpawnPointData>();
-    private List<_CharacterController> _deployedEnemies = new List<_CharacterController>();
-    private List<_CharacterController> _deployedFriendlies = new List<_CharacterController>();
+    private List<_EntityController> _deployedEnemies = new List<_EntityController>();
+    private List<_EntityController> _deployedFriendlies = new List<_EntityController>();
     private List<string> lineupNames = new List<string> { };
     private Dictionary<string, GameObject> lineupCharacters = new Dictionary<string, GameObject>();
     private Dictionary<int, GameObject> lineupEnemies = new Dictionary<int, GameObject>();
@@ -33,13 +33,13 @@ public class CombatController : MonoBehaviour
     private int currentLevelID;
     private float currentEnemyMultiplier;
 
-    public List<_CharacterController> deployedEnemies
+    public List<_EntityController> deployedEnemies
     {
         get { return _deployedEnemies; }
         set { _deployedEnemies = value; }
     }
 
-    public List<_CharacterController> deployedFriendlies
+    public List<_EntityController> deployedFriendlies
     {
         get { return _deployedFriendlies; }
         set { _deployedFriendlies = value; }
@@ -103,15 +103,15 @@ public class CombatController : MonoBehaviour
         GameObject friendlyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/Friendly Stove Prefab");
         GameObject enemyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/TEMP Enemy Stove Prefab");
 
-        Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.15f, mainCamera.nearClipPlane));
+        Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.25f, mainCamera.nearClipPlane));
         friendlyTowerInstance = Instantiate(friendlyTower, deployLocation, Quaternion.identity);
-        deployedFriendlies.Add(friendlyTowerInstance.GetComponent<_CharacterController>());
-        friendlyTowerInstance.GetComponent<_CharacterController>().characterData.Health = friendlyTowerHealth;
+        deployedFriendlies.Add(friendlyTowerInstance.GetComponent<_TowerController>());
+        friendlyTowerInstance.GetComponent<_TowerController>().characterData.Health = friendlyTowerHealth;
 
         deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.15f, mainCamera.nearClipPlane));
         enemyTowerInstance = Instantiate(enemyTower, deployLocation, Quaternion.identity);
-        deployedEnemies.Add(enemyTowerInstance.GetComponent<_CharacterController>());
-        enemyTowerInstance.GetComponent<_CharacterController>().characterData.Health = enemyTowerHealth;
+        deployedEnemies.Add(enemyTowerInstance.GetComponent<_TowerController>());
+        enemyTowerInstance.GetComponent<_TowerController>().characterData.Health = enemyTowerHealth;
     }
 
     void UpdateElapsedTime()
@@ -150,58 +150,64 @@ public class CombatController : MonoBehaviour
 
         //big question here is - when does a character change state? since all logic of what the character is doing is handled by the character controller and the state manager,
         //the combat controller should only be used for updating the charcaters state
-        foreach (_CharacterController friendly in deployedFriendlies)
+        foreach (_EntityController entity in deployedFriendlies)
         {
-            bool charWithinRange = Utilities.IsACharacterWithinRange(deployedEnemies, friendly);
-            if (friendly.characterData.isTower)
+            if (entity is _CharacterController friendly)
             {
-                continue;
-            }
-            //if a character is walking - state change is triggered upon an enemy coming into range
-            else if (friendly.CheckAnimatorStateName("Walk"))
-            {
-                if(charWithinRange) // if an enemy comes within range while walking
+                bool charWithinRange = Utilities.IsACharacterWithinRange(deployedEnemies, friendly);
+                if (friendly.characterData.isTower)
                 {
-                    friendly.UpdateAnimatorParameters("Fight");
+                    continue;
                 }
-            }
-
-            else if(friendly.CheckAnimatorStateName("Idle"))
-            {
-                if (!charWithinRange) // if no enemy in range while idling
+                //if a character is walking - state change is triggered upon an enemy coming into range
+                else if (friendly.CheckAnimatorStateName("Walk"))
                 {
-                    friendly.UpdateAnimatorParameters("Walk");
+                    if (charWithinRange) // if an enemy comes within range while walking
+                    {
+                        friendly.UpdateAnimatorParameters("Fight");
+                    }
+                }
+
+                else if (friendly.CheckAnimatorStateName("Idle"))
+                {
+                    if (!charWithinRange) // if no enemy in range while idling
+                    {
+                        friendly.UpdateAnimatorParameters("Walk");
+                    }
                 }
             }
         }
 
         //enemies attack sequence
-        foreach (_CharacterController enemy in deployedEnemies)
+        foreach (_EntityController entity in deployedEnemies)
         {
-            bool charWithinRange = Utilities.IsACharacterWithinRange(deployedFriendlies, enemy);
-            if (enemy.characterData.isTower)
+            if (entity is _CharacterController enemy)
             {
-                continue;
-            }
-            else if (enemy.CheckAnimatorStateName("Walk"))
-            {
-                if (charWithinRange) // if an enemy comes within range while walking
+                bool charWithinRange = Utilities.IsACharacterWithinRange(deployedFriendlies, enemy);
+                if (enemy.characterData.isTower)
                 {
-                    enemy.UpdateAnimatorParameters("Fight");
+                    continue;
                 }
-            }
-
-            else if (enemy.CheckAnimatorStateName("Idle"))
-            {
-                if (!charWithinRange) // if no enemy in range while idling
+                else if (enemy.CheckAnimatorStateName("Walk"))
                 {
-                    enemy.UpdateAnimatorParameters("Walk");
+                    if (charWithinRange) // if an enemy comes within range while walking
+                    {
+                        enemy.UpdateAnimatorParameters("Fight");
+                    }
+                }
+
+                else if (enemy.CheckAnimatorStateName("Idle"))
+                {
+                    if (!charWithinRange) // if no enemy in range while idling
+                    {
+                        enemy.UpdateAnimatorParameters("Walk");
+                    }
                 }
             }
         }
     }
 
-    public void RefreshTargetsForCharacter(_CharacterController character)
+    public void RefreshTargetsForCharacter(_EntityController character)
     {
         if(character.characterData.isEnemy)
         {
@@ -213,7 +219,7 @@ public class CombatController : MonoBehaviour
         }
     }
 
-    public void UpdateDeployedList(_CharacterController character, bool isAdding)
+    public void UpdateDeployedList(_EntityController character, bool isAdding)
     {
         var list = character.characterData.isEnemy ? deployedEnemies : deployedFriendlies;
 
@@ -227,7 +233,7 @@ public class CombatController : MonoBehaviour
         }
     }
 
-    public void DestroyPrefab(_CharacterController character)
+    public void DestroyPrefab(_EntityController character)
     {
         Destroy(character.PREFAB);
     }
@@ -244,7 +250,7 @@ public class CombatController : MonoBehaviour
 
     void CheckWinCondition()
     {
-        if (!deployedEnemies.Contains(enemyTowerInstance.GetComponent<_CharacterController>()))
+        if (!deployedEnemies.Contains(enemyTowerInstance.GetComponent<_TowerController>()))
         {
             Debug.Log("you win!");
             //PauseScene();
@@ -252,7 +258,7 @@ public class CombatController : MonoBehaviour
             //ModalController.DisplayRewardModalAfterWin(GrabRewardDataForCurrentLevel);
             sceneCleanup.CleanUpScene();
         }
-        else if (!deployedFriendlies.Contains(friendlyTowerInstance.GetComponent<_CharacterController>()))
+        else if (!deployedFriendlies.Contains(friendlyTowerInstance.GetComponent<_TowerController>()))
         {
             Debug.Log("you lose!");
             //PauseScene();

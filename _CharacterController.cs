@@ -3,33 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class _CharacterController : MonoBehaviour
+public class _CharacterController : _EntityController
 {
-    private CombatController combatController;
-    private Animator animator;  // Reference to the Animator component attached to the character prefab
     private AnimatorOverrideController overrideController;
     private AnimatorOverrideController newOverrideController;
-    private SpriteRenderer sprite;
-    private CharacterData _characterData;
-    private GameObject _PREFAB;
-    private float maxHealth;
-    private Color color;
-    private List<_CharacterController> _TARGETS = new List<_CharacterController>(); //create here so that only one list is ever used for targets
+    private List<_EntityController> _TARGETS = new List<_EntityController>(); //create here so that only one list is ever used for targets
     private Coroutine idleCoroutine;
 
-    public CharacterData characterData
-    {
-        get { return _characterData; }
-        set { _characterData = value; }
-    }
-
-    public GameObject PREFAB
-    {
-        get { return _PREFAB; }
-        set { _PREFAB = value; }
-    }
-
-    public List<_CharacterController> TARGETS
+    public List<_EntityController> TARGETS
     {
         get { return _TARGETS; }
         set { _TARGETS = value; }
@@ -50,24 +31,6 @@ public class _CharacterController : MonoBehaviour
         SetMaxHealth();
     }
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-        if (!characterData.isTower)
-        {
-            Color newColor = new Color(
-                0.5f + (characterData.Health / maxHealth) / 2,
-                0.5f + (characterData.Health / maxHealth) / 2,
-                0.5f + (characterData.Health / maxHealth) / 2
-            );
-            sprite.color = newColor;
-        }
-    }
-
     public void AttackProcess()
     {
         combatController.RefreshTargetsForCharacter(this);
@@ -75,57 +38,57 @@ public class _CharacterController : MonoBehaviour
         ClearTargets();
     }
 
-    public void PerformAttack(List<_CharacterController> targets)
+    public void PerformAttack(List<_EntityController> targets)
     {
-        foreach (_CharacterController target in targets)
+        foreach (_EntityController target in targets)
         {
             DealDamageToTarget(characterData.Attack, target, false);
         }
     }
 
-    public void DealDamageToTarget(float attack, _CharacterController target, bool applyRawDamage)
+    public void DealDamageToTarget(float attack, _EntityController target, bool applyRawDamage)
     {
-        float damage;
-        if (applyRawDamage)
+        if(target is _CharacterController targetChar)
         {
-            damage = attack;
+            float damage;
+            if (applyRawDamage)
+            {
+                damage = attack;
+            }
+            else
+            {
+                damage = (float)(attack / ((4 / Math.PI) * Math.Atan(Math.Pow((characterData.Defense / attack), 2)) + 1));
+            }
+            targetChar.TakeDamage(damage);
+            Debug.Log(this.characterData.Name + " dealt " + damage + " to " + targetChar.characterData.Name + ", who now has " + targetChar.characterData.Health);
+            if (targetChar.CheckIfDead())
+            {
+                targetChar.TriggerDeathProcess();
+            }
         }
-        else
-        {
-            damage = (float)(attack / ((4 / Math.PI) * Math.Atan(Math.Pow((characterData.Defense / attack), 2)) + 1));
-        }
-        target.TakeDamage(damage);
-        Debug.Log(this.characterData.Name + " dealt " + damage + " to " + target.characterData.Name + ", who now has " + target.characterData.Health);
-        if (target.CheckIfDead())
-        {
-            target.TriggerDeathProcess();
-        }
-    }
 
-    public void TakeDamage(float damage)
-    {
-        characterData.Health -= damage;
-    }
-
-    public bool CheckIfDead()
-    {
-        if (characterData.Health <= 0)
+        else if(target is _TowerController targetTower)
         {
-            return true;
+            float damage;
+            if (applyRawDamage)
+            {
+                damage = attack;
+            }
+            else
+            {
+                damage = (float)(attack / ((4 / Math.PI) * Math.Atan(Math.Pow((characterData.Defense / attack), 2)) + 1));
+            }
+            targetTower.TakeDamage(damage);
+            Debug.Log(this.characterData.Name + " dealt " + damage + " to " + targetTower.characterData.Name + ", who now has " + targetTower.characterData.Health);
+            if (targetTower.CheckIfDead())
+            {
+                targetTower.TriggerDeathProcess();
+            }
         }
-        return false;
-    }
-
-    public void TriggerDeathProcess()
-    {
-        combatController.UpdateDeployedList(this, false);
-        combatController.DestroyPrefab(this);
-        UpdateAnimatorParameters("Die");
     }
 
     public void PerformAbility(List<_CharacterController> targets)
     {
-        animator.SetTrigger("Ability");
         //perform ability
     }
 
@@ -168,9 +131,11 @@ public class _CharacterController : MonoBehaviour
         }
     }
 
-    void SetMaxHealth()
+    public void TriggerDeathProcess()
     {
-        maxHealth = characterData.Health;
+        combatController.UpdateDeployedList(this, false);
+        combatController.DestroyPrefab(this);
+        UpdateAnimatorParameters("Die");
     }
 
     public void UpdateAnimatorParameters(string stateName) //unset parameters and then set the right one
@@ -205,12 +170,6 @@ public class _CharacterController : MonoBehaviour
     void ClearTargets()
     {
         TARGETS.Clear();
-    }
-
-    public bool CheckAnimatorStateName(string stateName)
-    {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.IsName(stateName);
     }
 
     void SetAnimationOverrides()

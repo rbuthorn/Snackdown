@@ -35,7 +35,7 @@ public static class Utilities
         SceneManager.LoadScene(sceneName);
     }
 
-    public static bool IsACharacterWithinRange(List<_CharacterController> deployList, _CharacterController referenceCharacter)
+    public static bool IsACharacterWithinRange(List<_EntityController> deployList, _EntityController referenceCharacter)
     {
         float referenceX = referenceCharacter.transform.position.x;
         float attackRange = referenceCharacter.characterData.AttackRange;
@@ -43,7 +43,7 @@ public static class Utilities
         bool isAreaAttack = referenceCharacter.characterData.AreaAtk;
         bool isEnemy = referenceCharacter.characterData.isEnemy;
 
-        foreach (_CharacterController character in deployList)
+        foreach (_EntityController character in deployList)
         {
             float characterX = character.transform.position.x;
 
@@ -77,7 +77,7 @@ public static class Utilities
     }
 
     //assumes the character is already attacking
-    public static void AddCharactersToTargets(List<_CharacterController> deployList, _CharacterController referenceCharacter)
+    public static void AddCharactersToTargets(List<_EntityController> deployList, _EntityController referenceCharacter)
     {
         //referenceCharacter.clearTargets();
         float referenceX = referenceCharacter.transform.position.x;
@@ -86,34 +86,37 @@ public static class Utilities
         bool isAreaAttack = referenceCharacter.characterData.AreaAtk;
         bool isEnemy = referenceCharacter.characterData.isEnemy;
 
-        foreach (_CharacterController character in deployList)
+        foreach (_EntityController character in deployList)
         {
-            float characterX = character.transform.position.x;
-
-            // Determine the direction based on the relationship (friend or enemy)
-            float distance = isEnemy ? referenceX - characterX : characterX - referenceX;
-
-            // If the closest character is beyond the attack range, break out of the loop
-            if (distance > attackRange)
+            if(referenceCharacter is _CharacterController refChar)
             {
-                break;
-            }
+                float characterX = character.transform.position.x;
 
-            // If character is too close or out of attack range, skip to the next one
-            else if (distance <= 5f)
-            {
-                continue;
-            }
+                // Determine the direction based on the relationship (friend or enemy)
+                float distance = isEnemy ? referenceX - characterX : characterX - referenceX;
 
-            // If character is within attack range and not too close, add to targets
-            else if (distance <= attackRange && distance >= damageRange)
-            {
-                referenceCharacter.TARGETS.Add(character);
-
-                // If single-target attack, stop after first match
-                if (!isAreaAttack)
+                // If the closest character is beyond the attack range, break out of the loop
+                if (distance > attackRange)
                 {
                     break;
+                }
+
+                // If character is too close or out of attack range, skip to the next one
+                else if (distance <= 5f)
+                {
+                    continue;
+                }
+
+                // If character is within attack range and not too close, add to targets
+                else if (distance <= attackRange && distance >= damageRange)
+                {
+                    refChar.TARGETS.Add(character);
+
+                    // If single-target attack, stop after first match
+                    if (!isAreaAttack)
+                    {
+                        break;
+                    }
                 }
             }
         }

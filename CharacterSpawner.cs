@@ -26,14 +26,20 @@ public class CharacterSpawner : MonoBehaviour
         yield return new WaitForSeconds(spd.SpawnAfterXSecs);
         for (int i = 0; i < spd.NumSpawning; i++)
         {
-            DeployEnemy(lineupEnemies[spd.DBCharacterId], multiplier);
+            StartCoroutine(DeployEnemyCoroutine(lineupEnemies[spd.DBCharacterId], multiplier));
             yield return new WaitForSeconds(spd.TimeBetweenSpawns);
         }
     }
 
-    void DeployEnemy(GameObject enemy, float multiplier)
+    IEnumerator DeployEnemyCoroutine(GameObject enemy, float multiplier)
     {
-        Vector3 cameraCenter = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.2f, mainCamera.nearClipPlane));
+        _TowerController tower = GameObject.Find("Enemy Tower").GetComponent<_TowerController>();
+        if (!tower.CheckAnimatorStateName("Deploy"))
+        {
+            tower.UpdateAnimatorParameters("Deploy");
+        }
+        yield return new WaitForSeconds(.35f);
+        Vector3 cameraCenter = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, RandomYValueGenerator(), mainCamera.nearClipPlane));
         GameObject enemyInstance = Instantiate(enemy, cameraCenter, Quaternion.identity);
         _CharacterController enemyController = enemyInstance.GetComponent<_CharacterController>();
         enemyController.PREFAB = enemyInstance;
@@ -66,7 +72,7 @@ public class CharacterSpawner : MonoBehaviour
 
     void StartSpawnFriendlyCoroutine(GameObject friendly, float cookTime, int cost)
     {
-        _TowerController tower = GameObject.Find("Friendly Stove Prefab(Clone)").GetComponent<_TowerController>();
+        _TowerController tower = GameObject.Find("Friendly Tower").GetComponent<_TowerController>();
         tower.UpdateAnimatorParameters("Cook");
         StartCoroutine(SpawnFriendlyCoroutine(friendly, cookTime, cost, tower));
     }
@@ -76,11 +82,18 @@ public class CharacterSpawner : MonoBehaviour
         mannaController.UpdateCurrentManna(-1*cost);
         yield return new WaitForSeconds(cookTime);
         tower.UpdateAnimatorParameters("Deploy");
-        Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.2f, mainCamera.nearClipPlane));
+        Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, RandomYValueGenerator(), mainCamera.nearClipPlane));
         GameObject characterInstance = Instantiate(prefab, deployLocation, Quaternion.identity);
+        //add a function to move the character with a lfying height > 0 to its flying height, after being spanwed from the default location
         _CharacterController friendlyController = characterInstance.GetComponent<_CharacterController>();
         friendlyController.PREFAB = characterInstance;
         cc.UpdateDeployedList(friendlyController, true);
         cc.IncrementNumFriendliesSpawned();
+    }
+
+    float RandomYValueGenerator()
+    {
+        float randomValue = Random.Range(0.22f, 0.29f);
+        return randomValue;
     }
 }

@@ -31,6 +31,11 @@ public class _CharacterController : _EntityController
         SetMaxHealth();
     }
 
+    void Start()
+    {
+        sprite.sortingOrder = Mathf.RoundToInt(-transform.position.y * 100);
+    }
+
     public void AttackProcess()
     {
         combatController.RefreshTargetsForCharacter(this);

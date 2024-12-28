@@ -32,6 +32,9 @@ public class CombatController : MonoBehaviour
     private GameManager gameManager;
     private int currentLevelID;
     private float currentEnemyMultiplier;
+    private Queue<float> friendlySpawnQueue;
+    private Queue<float> enemySpawnQueue;
+    private const int towerLayer = 1;
 
     public List<_EntityController> deployedEnemies
     {
@@ -103,13 +106,17 @@ public class CombatController : MonoBehaviour
         GameObject friendlyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/Friendly Stove Prefab");
         GameObject enemyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/TEMP Enemy Stove Prefab");
 
-        Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.25f, mainCamera.nearClipPlane));
+        Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.36f, mainCamera.nearClipPlane));
         friendlyTowerInstance = Instantiate(friendlyTower, deployLocation, Quaternion.identity);
+        friendlyTowerInstance.name = "Friendly Tower";
+        friendlyTowerInstance.layer = towerLayer;
         deployedFriendlies.Add(friendlyTowerInstance.GetComponent<_TowerController>());
         friendlyTowerInstance.GetComponent<_TowerController>().characterData.Health = friendlyTowerHealth;
 
-        deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.15f, mainCamera.nearClipPlane));
+        deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, 0.36f, mainCamera.nearClipPlane));
         enemyTowerInstance = Instantiate(enemyTower, deployLocation, Quaternion.identity);
+        enemyTowerInstance.name = "Enemy Tower";
+        enemyTowerInstance.layer = towerLayer;
         deployedEnemies.Add(enemyTowerInstance.GetComponent<_TowerController>());
         enemyTowerInstance.GetComponent<_TowerController>().characterData.Health = enemyTowerHealth;
     }

@@ -252,7 +252,7 @@ public class DatabaseManager : MonoBehaviour
             Defense: 100,
             Health: 100,
             Speed: 50,
-            CookTime: .5f,
+            CookTime: 3f,
             Cooldown: 1,
             Cost: 100,
             AttackRange: 20,

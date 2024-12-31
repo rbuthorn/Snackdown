@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterSpawner : MonoBehaviour
 {
@@ -55,12 +56,13 @@ public class CharacterSpawner : MonoBehaviour
     }
 
     //FRIENDLIES
-    public int DeployFriendly(GameObject prefab, (int cost, float cookTime) tuple)
+    public int DeployFriendly(Button button, GameObject prefab, (int cost, float cookTime, float cooldown) tuple)
     {
-        var (cost, cookTime) = tuple;
+        var (cost, cookTime, cooldown) = tuple;
 
         if (mannaController.CheckIfEnoughManna(cost))
         {
+            StartCoroutine(StartDeployCooldownCoroutine(button, cooldown));
             StartSpawnFriendlyCoroutine(prefab, cookTime, cost);
             return 1;
         }
@@ -68,6 +70,13 @@ public class CharacterSpawner : MonoBehaviour
         {
             return 0;
         }
+    }
+
+    IEnumerator StartDeployCooldownCoroutine(Button button, float cooldown)
+    {
+        button.interactable = false;
+        yield return new WaitForSeconds(cooldown);
+        button.interactable = true;
     }
 
     void StartSpawnFriendlyCoroutine(GameObject friendly, float cookTime, int cost)

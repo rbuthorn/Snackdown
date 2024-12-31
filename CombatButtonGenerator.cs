@@ -14,7 +14,7 @@ public class ButtonGenerator : MonoBehaviour
     private List<string> buttonCharacters;
     private List<string> buttonNames;
     private List<GameObject> buttonLineup;
-    private Dictionary<GameObject, (int, float)> prefabInstances;
+    private Dictionary<GameObject, (int, float, float)> prefabInstances;
     private int xOffset = -474;
     private CharacterSpawner spawner;
 
@@ -26,12 +26,12 @@ public class ButtonGenerator : MonoBehaviour
         buttonCharacters = new List<string> { "Baby Carrot Prefab", "Baby Mussels Prefab", "Banana Phone Prefab", "Avocadolet Prefab", "Aged Cheese Prefab", "Banana Prefab"};
         buttonLineup = new List<GameObject>();
         spawner = GetComponent<CharacterSpawner>();
-        prefabInstances = new Dictionary<GameObject, (int, float)>();
+        prefabInstances = new Dictionary<GameObject, (int, float, float)>();
 
         foreach(string item in buttonCharacters)
         {
             CharacterData character = LocalDatabaseAccessLayer.LoadCharacterData(item);
-            prefabInstances.Add(Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/" + item), (character.Cost, character.CookTime));
+            prefabInstances.Add(Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/" + item), (character.Cost, character.CookTime, character.Cooldown));
         }
 
         foreach (string item in buttonNames)
@@ -61,15 +61,15 @@ public class ButtonGenerator : MonoBehaviour
             Button button = newButton.GetComponent<Button>();
             if (button != null)
             {
-                button.onClick.AddListener(() => ButtonClickHandler(key, prefabInstances[key]));
+                button.onClick.AddListener(() => ButtonClickHandler(button, key, prefabInstances[key]));
             }
             index += 1;
         }
     }
 
-    void ButtonClickHandler(GameObject key, (int cost, float cookTime) tuple)
+    void ButtonClickHandler(Button button, GameObject key, (int cost, float cookTime, float cooldown) tuple)
     {
-        onButtonClick.Invoke(spawner.DeployFriendly(key, tuple));
+        onButtonClick.Invoke(spawner.DeployFriendly(button, key, tuple));
     }
 
     void grabButtonLineup(){

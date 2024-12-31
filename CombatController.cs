@@ -104,7 +104,7 @@ public class CombatController : MonoBehaviour
         int friendlyTowerHealth = LocalDatabaseAccessLayer.GetFriendlyTowerHealth();
         //^^instantiates towers with placeholder health first, then dynamic health implemented
         GameObject friendlyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/Friendly Stove Prefab");
-        GameObject enemyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/TEMP Enemy Stove Prefab");
+        GameObject enemyTower = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/Enemy Cabinet Prefab");
 
         Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, 0.36f, mainCamera.nearClipPlane));
         friendlyTowerInstance = Instantiate(friendlyTower, deployLocation, Quaternion.identity);
@@ -137,7 +137,7 @@ public class CombatController : MonoBehaviour
                 )
             {
                 spawnPointsToDelete.Add(spawnPoint);
-                spawner.StartSpawnEnemyCoroutine(spawnPoint, lineupEnemies, currentEnemyMultiplier); //hardcoded
+                spawner.StartSpawnEnemyCoroutine(spawnPoint, lineupEnemies, currentEnemyMultiplier);
             }
         }
 

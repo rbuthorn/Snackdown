@@ -10,7 +10,7 @@ public class _EntityController : MonoBehaviour
     protected SpriteRenderer sprite;
     protected CharacterData _characterData;
     protected GameObject _PREFAB;
-    protected float maxHealth;
+    protected float _maxHealth;
     protected Color color;
 
     public CharacterData characterData
@@ -25,22 +25,15 @@ public class _EntityController : MonoBehaviour
         set { _PREFAB = value; }
     }
 
+    public float maxHealth
+    {
+        get { return _maxHealth; }
+        set { _maxHealth = value; }
+    }
+
     protected void Start()
     {
 
-    }
-
-    protected void Update()
-    {
-        if (!characterData.isTower)
-        {
-            Color newColor = new Color(
-                0.5f + (characterData.Health / maxHealth) / 2,
-                0.5f + (characterData.Health / maxHealth) / 2,
-                0.5f + (characterData.Health / maxHealth) / 2
-            );
-            sprite.color = newColor;
-        }
     }
 
     public void TakeDamage(float damage)

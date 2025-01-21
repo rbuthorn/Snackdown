@@ -9,11 +9,18 @@ public class _CharacterController : _EntityController
     private AnimatorOverrideController newOverrideController;
     private List<_EntityController> _TARGETS = new List<_EntityController>(); //create here so that only one list is ever used for targets
     private Coroutine idleCoroutine;
+    private List<StatusEffect> _activeEffects = new List<StatusEffect>();
 
-    public List<_EntityController> TARGETS
+    public List<_EntityController> TARGETS //this is effectively the same as a public variable. but, within the getter and setter, can add validaiton and whatnot
     {
         get { return _TARGETS; }
         set { _TARGETS = value; }
+    }
+
+    public List<StatusEffect> activeEffects
+    {
+        get { return _activeEffects; }
+        set { _activeEffects = value; }
     }
 
     void Awake()
@@ -34,6 +41,17 @@ public class _CharacterController : _EntityController
     void Start()
     {
         sprite.sortingOrder = Mathf.RoundToInt(-transform.position.y * 100);
+    }
+
+    void Update()
+    {
+        Color newColor = new Color(
+            0.5f + (characterData.Health / maxHealth) / 2,
+            0.5f + (characterData.Health / maxHealth) / 2,
+            0.5f + (characterData.Health / maxHealth) / 2
+        );
+        sprite.color = newColor;
+        UpdateEffects();
     }
 
     public void AttackProcess()
@@ -219,5 +237,33 @@ public class _CharacterController : _EntityController
         {
             Debug.Log(ex);
         }
+    }
+
+    void UpdateEffects()
+    {
+        foreach(StatusEffect effect in activeEffects)
+        {
+            if (effect.UpdateEffect(Time.deltaTime)) //is the duration completed?
+            {
+                RemoveStatusEffect(effect);
+            }
+        }
+    }
+
+    public void AddStatusEffect(StatusEffect effect)
+    {
+        effect.ApplyEffect(this);
+        activeEffects.Add(effect);
+    }
+
+    public void RemoveStatusEffect(StatusEffect effect)
+    {
+        effect.RemoveEffect(this);
+        activeEffects.Remove(effect);
+    }
+
+    public void Heal(float healing)
+    {
+        characterData.Health += healing;
     }
 }

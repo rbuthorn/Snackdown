@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public static class Utilities
 {
@@ -121,4 +122,19 @@ public static class Utilities
             }
         }
     }
+
+    public static _CharacterController FindFrontmostCharacter(_CharacterController character, List<_CharacterController> deployedFriendlies)
+    {
+        return deployedFriendlies
+            .OfType<_CharacterController>() // Filter for _CharacterController instances
+            .Where(friendly => friendly.characterData.Name == character.characterData.Name) // Match by name
+            .OrderByDescending(friendly => friendly.transform.position.x) // Order by x position
+            .FirstOrDefault(); // Get the first in the ordered list, or null if none match
+    }
+
+    //choose random ally group from lineup - ensure that lineup is the exact same as the team that goes into combat ALWAYS
+    //public static _CharacterController ChooseRandomAllyGroup()
+    //{
+
+    //}
 }

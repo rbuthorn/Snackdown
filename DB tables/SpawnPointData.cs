@@ -1,6 +1,7 @@
 using UnityEngine;
 using SQLite4Unity3d;
 
+[System.Serializable]
 public class SpawnPointData
 {
     [PrimaryKey]
@@ -19,6 +20,10 @@ public class SpawnPointData
     //extra time before the spawning actually begins - eg if spawnafterXtowerdamage condition is it, wait spawnAfterXSecs to actually spawn
     public float SpawnAfterXSecs { get; set; }
 
+    public int NumBatches { get; set; }
+    public float TimeBetweenBatches { get; set; }
+    public int SpawnAfterXBosses { get; set; }
+
     public SpawnPointData(
         int DBSpawnPointId,
         int DBCharacterId,
@@ -28,7 +33,10 @@ public class SpawnPointData
         int SpawnAfterXTowerDamage,
         int NumSpawning,
         float TimeBetweenSpawns,
-        float SpawnAfterXSecs
+        float SpawnAfterXSecs,
+        int NumBatches,
+        float TimeBetweenBatches,
+        int SpawnAfterXBosses
     )
     {
         setDBSpawnPointId(DBSpawnPointId);
@@ -40,6 +48,9 @@ public class SpawnPointData
         setNumSpawning(NumSpawning);
         setTimeBetweenSpawns(TimeBetweenSpawns);
         setSpawnAfterXSecs(SpawnAfterXSecs);
+        setNumBatches(NumBatches);
+        setTimeBetweenBatches(TimeBetweenBatches);
+        setSpawnAfterXBosses(SpawnAfterXBosses);
     }
     public void setDBSpawnPointId(int a)
     {
@@ -85,6 +96,21 @@ public class SpawnPointData
     {
         Debug.Assert(a >= 0);
         SpawnAfterXSecs = a;
+    }
+    public void setNumBatches(int a)
+    {
+        Debug.Assert(a >= 0);
+        NumBatches = a;
+    }
+    public void setTimeBetweenBatches(float a)
+    {
+        Debug.Assert(a >= 0);
+        TimeBetweenBatches = a;
+    }
+    public void setSpawnAfterXBosses(int a)
+    {
+        Debug.Assert(a >= 0);
+        SpawnAfterXBosses = a;
     }
     public SpawnPointData()
     {

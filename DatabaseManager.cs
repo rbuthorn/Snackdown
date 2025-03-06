@@ -28,7 +28,6 @@ public class DatabaseManager : MonoBehaviour
         connection.DropTable<CharacterData>();
         connection.DropTable<LevelData>();
         connection.DropTable<FlagData>();
-        connection.DropTable<SpawnPointData>();
         connection.DropTable<SensitiveCharacterData>();
         connection.DropTable<GameVersion>();
     }
@@ -119,6 +118,25 @@ public class DatabaseManager : MonoBehaviour
             RewardDataId: 0
         );
         InsertLevelData(Level1);
+
+        LevelData Level54 = new LevelData(
+        DBLevelId: 54,
+        LevelName: "second level(load tester)",
+        Wall: "na",
+        Floor: "na",
+        Basement: "na",
+        EnemyTower: "na",
+        EnemyTowerHealth: 1000,
+        LevelType: "campaign",
+        Chapter: "herbshire",
+        EnemyMultiplier: 1,
+        NumTimesBeaten: 0,
+        Difficulty: 1,
+        isHardModeLevel: false,
+        HardModeLevelId: -1,
+        RewardDataId: 0
+);
+        InsertLevelData(Level54);
     }
 
     private void initFlags(){
@@ -127,31 +145,6 @@ public class DatabaseManager : MonoBehaviour
 
     private void initSpawnPoints()
     {
-        SpawnPointData spawnpoint0 = new SpawnPointData(
-            DBSpawnPointId: 0,
-            DBCharacterId: 7,
-            DBLevelId: 0,
-            StartSpawningInXSecs: 5,
-            SpawnAfterXFriendlies: int.MaxValue,
-            SpawnAfterXTowerDamage: int.MaxValue,
-            NumSpawning: 20,
-            TimeBetweenSpawns: 1f,
-            SpawnAfterXSecs: 0
-        );
-        InsertSpawnPointData(spawnpoint0);
-
-        SpawnPointData spawnpoint1 = new SpawnPointData(
-            DBSpawnPointId: 1,
-            DBCharacterId: 7,
-            DBLevelId: 1,
-            StartSpawningInXSecs: int.MaxValue,
-            SpawnAfterXFriendlies: 1,
-            SpawnAfterXTowerDamage: int.MaxValue,
-            NumSpawning: 200,
-            TimeBetweenSpawns: .1f,
-            SpawnAfterXSecs: 5
-        );
-        InsertSpawnPointData(spawnpoint1);
     }
 
     private void initSensitiveCharacterData()

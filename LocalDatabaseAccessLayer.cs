@@ -287,6 +287,18 @@ public static class LocalDatabaseAccessLayer
         };
     }
 
+    public static void InsertSpawnPointData(SpawnPointData DBSpawnPointData)
+    {
+        using (var connection = new SQLiteConnection(databasePath, SQLiteOpenFlags.ReadWrite))
+        {
+            if (DBSpawnPointData == null)
+            {
+                Debug.LogError("spawn data null");
+            }
+            connection.Insert(DBSpawnPointData);
+        };
+    }
+
     //public static void UpsertData(string prefabName, CharacterData characterData)
     //{
     //    if (characterData == null)

@@ -22,8 +22,8 @@ public class ButtonGenerator : MonoBehaviour
     {
         canvas = GameObject.Find("Basement").GetComponent<Canvas>();
         //hardcoded solution for now
-        buttonNames = new List<string> { "Baby Carrot Button Prefab", "Baby Mussels Button Prefab", "Banana Phone Button Prefab", "Avocadolet Button Prefab", "Aged Cheese Button Prefab", "Banana Button Prefab"};
-        buttonCharacters = new List<string> { "Baby Carrot Prefab", "Baby Mussels Prefab", "Banana Phone Prefab", "Avocadolet Prefab", "Aged Cheese Prefab", "Banana Prefab"};
+        buttonNames = new List<string> { "Baby Carrot Button Prefab", "Butter Button Prefab", "Berry Bandit Button Prefab", "Kawaii Kiwi Button Prefab"};
+        buttonCharacters = new List<string> { "Baby Carrot Prefab", "Butter Prefab", "Berry Bandit Prefab", "Kawaii Kiwi Prefab"};
         buttonLineup = new List<GameObject>();
         spawner = GetComponent<CharacterSpawner>();
         prefabInstances = new Dictionary<GameObject, (int, float, float)>();

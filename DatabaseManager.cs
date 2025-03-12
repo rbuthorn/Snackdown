@@ -100,8 +100,8 @@ public class DatabaseManager : MonoBehaviour
         );
         InsertLevelData(Level0);
 
-        LevelData Level1 = new LevelData(
-            DBLevelId: 1,
+        LevelData Level15 = new LevelData(
+            DBLevelId: 15,
             LevelName: "second level(load tester)",
             Wall: "na",
             Floor: "na",
@@ -117,7 +117,7 @@ public class DatabaseManager : MonoBehaviour
             HardModeLevelId: -1,
             RewardDataId: 0
         );
-        InsertLevelData(Level1);
+        InsertLevelData(Level15);
 
         LevelData Level54 = new LevelData(
         DBLevelId: 54,
@@ -280,10 +280,10 @@ public class DatabaseManager : MonoBehaviour
 
     private void initAgedCheese()
     {
-        CharacterData agedCheese = new CharacterData(
+        CharacterData butter = new CharacterData(
             DBCharacterId: 2,
-            Name: "Aged Cheese",
-            PrefabName: "Aged Cheese Prefab",
+            Name: "Butter",
+            PrefabName: "Butter Prefab",
             Type: "dairy",
             Quality: "rotten",
             AbilityId: 0,
@@ -314,30 +314,30 @@ public class DatabaseManager : MonoBehaviour
             Stars: 1,
             FlyingHeight: 0
         );
-        InsertCharacterData(agedCheese);
+        InsertCharacterData(butter);
 
-        SensitiveCharacterData _agedCheese = new SensitiveCharacterData(
+        SensitiveCharacterData _butter = new SensitiveCharacterData(
             DBCharacterId: 2,
             Level: 1,
             IsUnlocked: true,
             DeadInSurvival: false
             );
-        InsertSensitiveCharacterData(_agedCheese);
+        InsertSensitiveCharacterData(_butter);
     }
 
     private void initAvocadolet()
     {
-        CharacterData avocadolet = new CharacterData(
+        CharacterData berryBandit = new CharacterData(
             DBCharacterId: 3,
-            Name: "Avocadolet",
-            PrefabName: "Avocadolet Prefab",
-            Type: "vegetable",
+            Name: "Berry Bandit",
+            PrefabName: "Berry Bandit Prefab",
+            Type: "fruit",
             Quality: "rotten",
             AbilityId: 0,
             Attack: 40,
             Defense: 80,
             Health: 200,
-            Speed: 6,
+            Speed: 35,
             CookTime: 2,
             Cost: 100,
             Cooldown: 1,
@@ -361,30 +361,30 @@ public class DatabaseManager : MonoBehaviour
             Stars: 1,
             FlyingHeight: 0
         );
-        InsertCharacterData(avocadolet);
+        InsertCharacterData(berryBandit);
 
-        SensitiveCharacterData _avocadolet = new SensitiveCharacterData(
+        SensitiveCharacterData _berryBandit = new SensitiveCharacterData(
             DBCharacterId: 3,
             Level: 1,
             IsUnlocked: true,
             DeadInSurvival: false
             );
-        InsertSensitiveCharacterData(_avocadolet);
+        InsertSensitiveCharacterData(_berryBandit);
     }
 
     private void initBabyMussels()
     {
-        CharacterData babyMussels = new CharacterData(
+        CharacterData kawaiiKiwi = new CharacterData(
             DBCharacterId: 4,
-            Name: "Baby Mussels",
-            PrefabName: "Baby Mussels Prefab",
-            Type: "seafood",
+            Name: "Kawaii Kiwi",
+            PrefabName: "Kawaii Kiwi Prefab",
+            Type: "fruit",
             Quality: "rotten",
             AbilityId: 0,
             Attack: 150,
             Defense: 80,
             Health: 150,
-            Speed: 1,
+            Speed: 60,
             CookTime: 1,
             Cost: 100,
             Cooldown: 1,
@@ -408,15 +408,15 @@ public class DatabaseManager : MonoBehaviour
             Stars: 1,
             FlyingHeight: 0
         );
-        InsertCharacterData(babyMussels);
+        InsertCharacterData(kawaiiKiwi);
 
-        SensitiveCharacterData _babyMussels = new SensitiveCharacterData(
+        SensitiveCharacterData _kawaiiKiwi = new SensitiveCharacterData(
             DBCharacterId: 4,
             Level: 1,
             IsUnlocked: true,
             DeadInSurvival: false
             );
-        InsertSensitiveCharacterData(_babyMussels);
+        InsertSensitiveCharacterData(_kawaiiKiwi);
     }
 
     private void initBananaPhone()
@@ -565,7 +565,7 @@ public class DatabaseManager : MonoBehaviour
     private void initSpoon()
     {
         CharacterData spoon = new CharacterData(
-            DBCharacterId: 7,
+            DBCharacterId: 100000,
             Name: "Spoon",
             PrefabName: "Spoon Prefab",
             Type: "enemy",
@@ -604,7 +604,7 @@ public class DatabaseManager : MonoBehaviour
     private void initFork()
     {
         CharacterData fork = new CharacterData(
-            DBCharacterId: 8,
+            DBCharacterId: 100001,
             Name: "Fork",
             PrefabName: "Fork Prefab",
             Type: "enemy",

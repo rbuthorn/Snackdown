@@ -93,8 +93,11 @@ public class CombatController : MonoBehaviour
         foreach (var spawnPoint in spawnPoints)
         {
             CharacterData enemy = LocalDatabaseAccessLayer.GetEnemyFromSpawnPoint(spawnPoint.DBCharacterId);
-            GameObject enemyPrefab = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/" + enemy.PrefabName);
-            lineupEnemies.Add(enemy.DBCharacterId, enemyPrefab);
+            if (!lineupEnemies.ContainsKey(enemy.DBCharacterId))
+            {
+                GameObject enemyPrefab = Utilities.LoadAsset<GameObject>("Prefabs/Character Prefabs/" + enemy.PrefabName);
+                lineupEnemies.Add(enemy.DBCharacterId, enemyPrefab);
+            }
         }
     }
 

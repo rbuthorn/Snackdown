@@ -5,6 +5,8 @@ using System;
 
 public class _TowerController : _EntityController
 {
+    private List<long> states = new List<long>(); //create here so that only one list is ever used for targets
+
     void Awake()
     {
         combatController = GameObject.Find("combatController").GetComponent<CombatController>();
@@ -20,31 +22,45 @@ public class _TowerController : _EntityController
         SetMaxHealth();
     }
 
+    void Update()
+    {
+        UpdateAnimatorParameters("");
+    }
+
     public void TriggerDeathProcess()
     {
         combatController.UpdateDeployedList(this, false);
         combatController.DestroyPrefab(this);
     }
 
+    public void TriggerDeploy()
+    {
+        animator.SetTrigger("Deploy");
+    }
+
+    public void AddToStateList(long ts)
+    {
+        states.Add(ts);
+    }
+
+    public void RemoveFromStateList(long ts)
+    {
+        states.Remove(ts);
+    }
+
     public void UpdateAnimatorParameters(string stateName) //unset parameters and then set the right one
     {
         if (!characterData.isEnemy)
         {
-            animator.SetBool("Idle", false);
-            animator.SetBool("Cook", false);
-            switch (stateName)
+            if (states.Count > 0)
             {
-                case "Idle":
-                    animator.SetBool(stateName, true);
-                    break;
-
-                case "Cook":
-                    animator.SetBool(stateName, true);
-                    break;
-
-                case "Deploy":
-                    animator.SetTrigger(stateName);
-                    break;
+                animator.SetBool("Cook", true);
+                animator.SetBool("Idle", false);
+            }
+            else
+            {
+                animator.SetBool("Cook", false);
+                animator.SetBool("Idle", true);
             }
         }
         else

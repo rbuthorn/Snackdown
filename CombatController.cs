@@ -135,12 +135,12 @@ public class CombatController : MonoBehaviour
         foreach (SpawnPointData spawnPoint in spawnPoints)
         {
             if (totalTimeElapsed >= spawnPoint.StartSpawningInXSecs
-                || startingTowerHealth - currTowerHealth >= spawnPoint.SpawnAfterXTowerDamage
+                || startingTowerHealth - currTowerHealth > spawnPoint.SpawnAfterXTowerDamage
                 || totalFriendliesSpawned >= spawnPoint.SpawnAfterXFriendlies
                 )
             {
                 spawnPointsToDelete.Add(spawnPoint);
-                spawner.StartSpawnEnemyCoroutine(spawnPoint, lineupEnemies, currentEnemyMultiplier);
+                BatchSpawnCoroutine(spawnPoint, lineupEnemies, currentEnemyMultiplier);
             }
         }
 
@@ -148,6 +148,21 @@ public class CombatController : MonoBehaviour
         foreach (SpawnPointData spawnpoint in spawnPointsToDelete)
         {
             spawnPoints.Remove(spawnpoint);
+        }
+    }
+
+    void BatchSpawnCoroutine(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies, float multiplier)
+    {
+        StartCoroutine(BatchSpawn(spd, lineupEnemies, multiplier));
+    }
+
+    IEnumerator BatchSpawn(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies, float multiplier)
+    {
+        yield return new WaitForSeconds(spd.SpawnAfterXSecs);
+        for (int i = 0; i <= spd.NumBatches; i++)
+        {
+            spawner.StartSpawnEnemyCoroutine(spd, lineupEnemies, multiplier);
+            yield return new WaitForSeconds(spd.TimeBetweenBatches);
         }
     }
 

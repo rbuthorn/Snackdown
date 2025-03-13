@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class CharacterSpawner : MonoBehaviour
 {
@@ -24,7 +25,6 @@ public class CharacterSpawner : MonoBehaviour
 
     IEnumerator SpawnEnemyCoroutine(SpawnPointData spd, Dictionary<int, GameObject> lineupEnemies, float multiplier)
     {
-        yield return new WaitForSeconds(spd.SpawnAfterXSecs);
         for (int i = 0; i < spd.NumSpawning; i++)
         {
             StartCoroutine(DeployEnemyCoroutine(lineupEnemies[spd.DBCharacterId], multiplier));
@@ -35,10 +35,7 @@ public class CharacterSpawner : MonoBehaviour
     IEnumerator DeployEnemyCoroutine(GameObject enemy, float multiplier)
     {
         _TowerController tower = GameObject.Find("Enemy Tower").GetComponent<_TowerController>();
-        if (!tower.CheckAnimatorStateName("Deploy"))
-        {
-            tower.UpdateAnimatorParameters("Deploy");
-        }
+        tower.UpdateAnimatorParameters("Deploy");
         yield return new WaitForSeconds(.35f);
         Vector3 cameraCenter = mainCamera.ViewportToWorldPoint(new Vector3(0.9f, RandomYValueGenerator(), mainCamera.nearClipPlane));
         GameObject enemyInstance = Instantiate(enemy, cameraCenter, Quaternion.identity);
@@ -82,15 +79,17 @@ public class CharacterSpawner : MonoBehaviour
     void StartSpawnFriendlyCoroutine(GameObject friendly, float cookTime, int cost)
     {
         _TowerController tower = GameObject.Find("Friendly Tower").GetComponent<_TowerController>();
-        tower.UpdateAnimatorParameters("Cook");
-        StartCoroutine(SpawnFriendlyCoroutine(friendly, cookTime, cost, tower));
+        long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        tower.AddToStateList(timestamp);
+        StartCoroutine(SpawnFriendlyCoroutine(friendly, cookTime, cost, tower, timestamp));
     }
 
-    IEnumerator SpawnFriendlyCoroutine(GameObject prefab, float cookTime, int cost, _TowerController tower)
+    IEnumerator SpawnFriendlyCoroutine(GameObject prefab, float cookTime, int cost, _TowerController tower, long ts)
     {
         mannaController.UpdateCurrentManna(-1*cost);
         yield return new WaitForSeconds(cookTime);
-        tower.UpdateAnimatorParameters("Deploy");
+        tower.RemoveFromStateList(ts);
+        tower.TriggerDeploy();
         Vector3 deployLocation = mainCamera.ViewportToWorldPoint(new Vector3(0.1f, RandomYValueGenerator(), mainCamera.nearClipPlane));
         GameObject characterInstance = Instantiate(prefab, deployLocation, Quaternion.identity);
         //add a function to move the character with a lfying height > 0 to its flying height, after being spanwed from the default location
@@ -102,7 +101,7 @@ public class CharacterSpawner : MonoBehaviour
 
     float RandomYValueGenerator()
     {
-        float randomValue = Random.Range(0.22f, 0.29f);
+        float randomValue = UnityEngine.Random.Range(0.22f, 0.29f);
         return randomValue;
     }
 }

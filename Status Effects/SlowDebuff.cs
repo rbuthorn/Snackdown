@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class SlowDebuff : StatusEffect
 {
-    private float debuffMultiplier; //(0,1)
+    private float debuffPercent; //(0,1)
 
-    public SlowDebuff(float duration, float debuffMultiplier) : base("SlowDebuff", duration)
+    public SlowDebuff(float duration, float debuffPercent) : base("SlowDebuff", duration)
     {
-        this.debuffMultiplier = debuffMultiplier;
+        this.debuffPercent = debuffPercent;
     }
 
     public override void ApplyEffect(_CharacterController character)
     {
-        character.characterData.Speed *= debuffMultiplier;
+        character.characterData.Speed *= debuffPercent;
         Debug.Log("Slow Debuff applied to " + character.characterData.Name);
     }
 
     public override void RemoveEffect(_CharacterController character)
     {
-        character.characterData.Speed /= debuffMultiplier;
+        character.characterData.Speed /= debuffPercent;
         Debug.Log("Slow Debuff removed from " + character.characterData.Name);
     }
 }

@@ -137,4 +137,57 @@ public class AbilitiesController : MonoBehaviour
             friendly.AddStatusEffect(defenseBuff);
         }
     }
+
+    //Coffee
+    void RandomFriendliesGainSpeedBuff(_CharacterController character, int evolutionNumber)
+    {
+        List<_CharacterController> friendlies = cc.deployedFriendlies.OfType<_CharacterController>().ToList();
+        System.Random random = new System.Random();
+        float speedBuffMultiplier = 1.5f + (.25f * evolutionNumber);
+        float duration = 3 + (3 * evolutionNumber);
+        List<_CharacterController> shuffledFriendlies = friendlies.OrderBy(f => random.Next()).ToList();
+        _CharacterController chosenFriendly = shuffledFriendlies.First();
+        List<_CharacterController> matchingFriendlies = friendlies.Where(f => f.characterData.Name == chosenFriendly.characterData.Name).ToList();  
+        foreach (_CharacterController friendly in matchingFriendlies)
+        {
+            SpeedBuff speedBuff = new SpeedBuff(duration, speedBuffMultiplier);
+            friendly.AddStatusEffect(speedBuff);
+        }
+    }
+
+    //Donut
+    void RandomFriendliesGainAttackBuff(_CharacterController character, int evolutionNumber)
+    {
+        List<_CharacterController> friendlies = cc.deployedFriendlies.OfType<_CharacterController>().ToList();
+        System.Random random = new System.Random();
+        float attackBuffMultiplier = 1.5f + (.25f * evolutionNumber);
+        float duration = 5 + (5 * evolutionNumber);
+        List<_CharacterController> shuffledFriendlies = friendlies.OrderBy(f => random.Next()).ToList();
+        _CharacterController chosenFriendly = shuffledFriendlies.First();
+        List<_CharacterController> matchingFriendlies = friendlies.Where(f => f.characterData.Name == chosenFriendly.characterData.Name).ToList();
+        foreach (_CharacterController friendly in matchingFriendlies)
+        {
+            AttackBuff attackBuff = new AttackBuff(duration, attackBuffMultiplier);
+            friendly.AddStatusEffect(attackBuff);
+        }
+    }
+
+    //DEBUFF ABILITIES
+
+    //Strawberry
+    void SlowAllAlliesPerNumSameCharacter(_CharacterController character, int evolutionNumber)
+    {
+        List<_CharacterController> friendlies = cc.deployedFriendlies.OfType<_CharacterController>().ToList();
+        List<_CharacterController> enemies = cc.deployedEnemies.OfType<_CharacterController>().ToList();
+        int numMatchingCharacters = friendlies.Where(friendly => friendly.characterData.Name == character.characterData.Name).Count();
+        float percentSlow = numMatchingCharacters * (.04f + (.04f * evolutionNumber));
+        percentSlow = 1.0f - percentSlow;
+        float duration = 5.0f;
+        float result = Math.Max(percentSlow, 0.01f);
+        foreach (_CharacterController enemy in enemies)
+        {
+            SlowDebuff slowDebuff = new SlowDebuff(duration, result);
+            enemy.AddStatusEffect(slowDebuff);
+        }
+    }
 }
